@@ -76,7 +76,8 @@ def create_embed(videos, note=None):
         "embeds": [
             {
                 "title": "📺 YouTube Monitor",
-                 "description": description,
+                "description": description,
+                "color": 16711680,
                 "footer": {
                     "text": f"Letzter check nach neuen videos: {last_run}"
                 }

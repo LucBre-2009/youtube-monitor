@@ -79,7 +79,7 @@ def create_embed(videos, note=None):
                 "description": description,
                 "color": 16711680,
                 "footer": {
-                    "text": f"<@932313360001810472> Letzter check nach neuen videos: {last_run}"
+                    "text": f"Letzter check nach neuen videos: {last_run}"
                 }
             }
         ]

@@ -72,6 +72,8 @@ def create_embed(videos, note=None):
                 }
             }
         ]
+        "footer": {
+            "text": f"Zuletzt aktualisiert: {current_time}"
     }
 
 

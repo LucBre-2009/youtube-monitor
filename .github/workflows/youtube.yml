@@ -1,50 +1,41 @@
 name: YouTube Monitor
 
+on:
   workflow_dispatch:
-
 
 permissions:
   contents: write
 
-
 jobs:
-
   check:
-
     runs-on: ubuntu-latest
 
-
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
 
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.12"
+      - name: Run monitor
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          python youtube.py
 
+      - name: Save data
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
 
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
+          git add data/
 
+          git commit -m "Update YouTube monitor data" || exit 0
 
-    - name: Run monitor
-      env:
-        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-      run: |
-        python youtube.py
-
-
-    - name: Save data
-      run: |
-        git config user.name "github-actions"
-        git config user.email "actions@github.com"
-
-        git add data/
-
-        git commit -m "Update YouTube monitor data" || exit 0
-
-        git push
+          git push

@@ -9,6 +9,11 @@ permissions:
 
 jobs:
 
+steps:
+  - name: Zeige die Run ID
+    run: echo "Die ID dieses Durchlaufs ist ${{ github.run_id }}"
+    
+
   check:
 
     runs-on: ubuntu-latest

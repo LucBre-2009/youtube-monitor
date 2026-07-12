@@ -35,13 +35,21 @@ def get_latest_video(channel_id):
     if not feed.entries:
         return None
 
-    video = feed.entries[0]
+    for video in feed.entries:
 
-    return {
-        "id": video.yt_videoid,
-        "title": video.title,
-        "link": video.link
-    }
+        video_link = video.link
+
+        # Shorts überspringen
+        if "/shorts/" in video_link:
+            continue
+
+        return {
+            "id": video.yt_videoid,
+            "title": video.title,
+            "link": video_link
+        }
+
+    return None
 
 
 def create_embed(videos, note=None):
@@ -123,6 +131,7 @@ def main():
 
     new_videos = []
 
+
     for channel in channels:
 
         latest = get_latest_video(channel["id"])
@@ -141,12 +150,9 @@ def main():
             old_videos[channel["id"]] = latest["id"]
 
 
-    note = None
-
 
     payload = create_embed(
-        new_videos,
-        note
+        new_videos
     )
 
 
@@ -162,15 +168,9 @@ def main():
 
         if not success:
 
-            note = (
-                "Neue Nachricht erstellt, "
-                "weil die alte Discord-Nachricht "
-                "nicht mehr erreichbar war."
-            )
-
             payload = create_embed(
                 new_videos,
-                note
+                "Neue Nachricht erstellt, weil die alte Discord-Nachricht nicht mehr erreichbar war."
             )
 
             message_id = send_message(payload)
@@ -180,14 +180,9 @@ def main():
 
     else:
 
-        note = (
-            "Erste Nachricht erstellt, "
-            "weil keine Message-ID vorhanden war."
-        )
-
         payload = create_embed(
             new_videos,
-            note
+            "Erste Nachricht erstellt, weil keine Message-ID vorhanden war."
         )
 
         message_id = send_message(payload)

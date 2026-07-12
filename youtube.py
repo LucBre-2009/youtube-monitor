@@ -2,6 +2,8 @@ import os
 import json
 import requests
 import feedparser
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 
 WEBHOOK = os.environ["DISCORD_WEBHOOK"]
@@ -53,7 +55,6 @@ def create_embed(videos, note=None):
         description += "Keine neuen Videos gefunden."
 
     else:
-
         for v in videos:
             description += (
                 f"📺 **{v['channel']}**\n"
@@ -62,18 +63,25 @@ def create_embed(videos, note=None):
             )
 
 
+    now = datetime.now(
+        ZoneInfo("Europe/Berlin")
+    )
+
+    last_run = now.strftime(
+        "%d.%m.%Y %H:%M Uhr"
+    )
+
+
     return {
         "embeds": [
             {
                 "title": "📺 YouTube Monitor",
                 "description": description,
                 "footer": {
-                    "text": "GitHub Actions"
+                    "text": f"Letzter Run: {last_run}"
                 }
             }
         ]
-        "footer": {
-            "text": f"Zuletzt aktualisiert: {current_time}"
     }
 
 
@@ -130,7 +138,6 @@ def main():
             new_videos.append(latest)
 
             old_videos[channel["id"]] = latest["id"]
-
 
 
     note = None

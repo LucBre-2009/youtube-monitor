@@ -39,8 +39,12 @@ def get_latest_video(channel_id):
 
         video_link = video.link
 
-        # Shorts überspringen
-    
+        # Shorts und Livestreams überspringen
+        if (
+            "/shorts/" in video_link
+            or "/live/" in video_link
+        ):
+            continue
 
         return {
             "id": video.yt_videoid,
@@ -69,7 +73,6 @@ def create_embed(videos, note=None):
                 f"🔗 {v['link']}\n\n"
             )
 
-
     now = datetime.now(
         ZoneInfo("Europe/Berlin")
     )
@@ -77,7 +80,6 @@ def create_embed(videos, note=None):
     last_run = now.strftime(
         "%d.%m.%Y %H:%M Uhr"
     )
-
 
     return {
         "embeds": [
@@ -120,16 +122,13 @@ def edit_message(message_id, payload):
     return r.status_code == 200
 
 
-
 def main():
 
     channels = load(CHANNEL_FILE)
     old_videos = load(VIDEOS_FILE)
     message = load(MESSAGE_FILE)
 
-
     new_videos = []
-
 
     for channel in channels:
 
@@ -138,9 +137,7 @@ def main():
         if not latest:
             continue
 
-
         latest["channel"] = channel["name"]
-
 
         if old_videos.get(channel["id"]) != latest["id"]:
 
@@ -148,15 +145,11 @@ def main():
 
             old_videos[channel["id"]] = latest["id"]
 
-
-
     payload = create_embed(
         new_videos
     )
 
-
     message_id = message.get("message_id")
-
 
     if message_id:
 
@@ -176,7 +169,6 @@ def main():
 
             message["message_id"] = message_id
 
-
     else:
 
         payload = create_embed(
@@ -187,8 +179,6 @@ def main():
         message_id = send_message(payload)
 
         message["message_id"] = message_id
-
-
 
     save(
         VIDEOS_FILE,

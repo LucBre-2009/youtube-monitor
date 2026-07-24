@@ -40,8 +40,11 @@ def get_latest_video(channel_id):
         video_link = video.link
 
         # Shorts überspringen
-        if "/shorts/" in video_link:
-            continue
+        if (
+    "/shorts/" in video_link
+    or "/live/" in video_link
+):
+    continue
 
         return {
             "id": video.yt_videoid,
